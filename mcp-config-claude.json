@@ -1,0 +1,13 @@
+{
+    "_comment": "Configuration for Claude Desktop - add this to your claude_desktop_config.json",
+    "mcpServers": {
+        "lunchroulette": {
+            "command": "dotnet",
+            "args": [
+                "run",
+                "--project",
+                "c:\\GitHub\\LunchRouletteMCP\\LunchTimeMCP\\LunchTimeMCP.csproj"
+            ]
+        }
+    }
+}

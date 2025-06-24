@@ -1,0 +1,16 @@
+{
+    "_comment": "Configuration for VS Code with GitHub Copilot",
+    "inputs": [],
+    "servers": {
+        "lunchroulette": {
+            "type": "stdio",
+            "command": "dotnet",
+            "args": [
+                "run",
+                "--project",
+                "c:\\GitHub\\LunchRouletteMCP\\LunchTimeMCP\\LunchTimeMCP.csproj"
+            ],
+            "env": {}
+        }
+    }
+}
