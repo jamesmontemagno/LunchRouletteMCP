@@ -86,6 +86,33 @@ public class RestaurantService
         return await Task.FromResult(stats);
     }
 
+    public async Task<FormattedRestaurantStats> GetFormattedVisitStatsAsync()
+    {
+        var stats = await GetVisitStatsAsync();
+        
+        var formattedStats = stats.Values
+            .OrderByDescending(x => x.VisitCount)
+            .Select(stat => new FormattedRestaurantStat
+            {
+                Restaurant = stat.Restaurant.Name,
+                Location = stat.Restaurant.Location,
+                FoodType = stat.Restaurant.FoodType,
+                VisitCount = stat.VisitCount,
+                TimesEaten = stat.VisitCount == 0 ? "Never" : 
+                            stat.VisitCount == 1 ? "Once" : 
+                            $"{stat.VisitCount} times"
+            })
+            .ToList();
+
+        return new FormattedRestaurantStats
+        {
+            Message = "Restaurant visit statistics:",
+            Statistics = formattedStats,
+            TotalRestaurants = stats.Count,
+            TotalVisits = stats.Values.Sum(x => x.VisitCount)
+        };
+    }
+
     private void LoadData()
     {
         if (!File.Exists(dataFilePath))
@@ -169,12 +196,30 @@ public partial class RestaurantData
     public Dictionary<string, int> VisitCounts { get; set; } = new();
 }
 
+public class FormattedRestaurantStat
+{
+    public string Restaurant { get; set; } = string.Empty;
+    public string Location { get; set; } = string.Empty;
+    public string FoodType { get; set; } = string.Empty;
+    public int VisitCount { get; set; }
+    public string TimesEaten { get; set; } = string.Empty;
+}
+
+public class FormattedRestaurantStats
+{
+    public string Message { get; set; } = string.Empty;
+    public List<FormattedRestaurantStat> Statistics { get; set; } = new();
+    public int TotalRestaurants { get; set; }
+    public int TotalVisits { get; set; }
+}
+
 [JsonSerializable(typeof(List<Restaurant>))]
 [JsonSerializable(typeof(Restaurant))]
 [JsonSerializable(typeof(RestaurantVisitInfo))]
 [JsonSerializable(typeof(Dictionary<string, RestaurantVisitInfo>))]
 [JsonSerializable(typeof(RestaurantData))]
-[JsonSerializable(typeof(object))]
+[JsonSerializable(typeof(FormattedRestaurantStat))]
+[JsonSerializable(typeof(FormattedRestaurantStats))]
 internal sealed partial class RestaurantContext : JsonSerializerContext
 {
 }
